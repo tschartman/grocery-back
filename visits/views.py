@@ -1,36 +1,47 @@
 from visits.models import Visit
+from visits.models import Item
 from visits.serializers import VisitSerializer
-from rest_framework import generics
-from rest_framework import permissions
-from django.contrib.auth.models import User
+from visits.serializers import ItemSerializer
 from visits.serializers import UserSerializer
 from visits.permissions import IsOwnerOrReadOnly
+from django.contrib.auth.models import User
+from rest_framework import viewsets
+from rest_framework import permissions
+from rest_framework.decorators import action
+from rest_framework import renderers
+from rest_framework.response import Response
 
 
-class VisitList(generics.ListCreateAPIView):
+class VisitViewSet(viewsets.ModelViewSet):
     """
-    List all code snippets, or create a new snippet.
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
     """
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = Visit.objects.all()
     serializer_class = VisitSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-class VisitDetail(generics.RetrieveUpdateDestroyAPIView):
+class ItemViewSet(viewsets.ModelViewSet):
     """
-    Retrieve, update or delete a grocery visit.
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
     """
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
-    queryset = Visit.objects.all()
-    serializer_class = VisitSerializer
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
-class UserDetail(generics.RetrieveAPIView):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
