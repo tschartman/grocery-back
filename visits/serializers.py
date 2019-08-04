@@ -1,8 +1,16 @@
 from rest_framework import serializers
 from visits.models import Visit
 from visits.models import Item
+from visits.models import Store
 from django.contrib.auth.models import User
 
+
+class StoreSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Store
+        fields = ('url', 'id', 'name', 'domain', 'address', 'city', 'state', 'zipcode', 'owner')
 
 class VisitSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -10,7 +18,7 @@ class VisitSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Visit
-        fields = ('url', 'id', 'date', 'store', 'total', 'location', 'owner', 'items')
+        fields = ('url', 'id', 'date', 'total', 'owner', 'items', 'store')
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
