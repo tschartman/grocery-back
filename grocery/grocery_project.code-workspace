@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "/Users/timschartman/Documents/grocery/grocery-back"
+		},
+		{
+			"path": "/Users/timschartman/Documents/grocery/grocery-front"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
