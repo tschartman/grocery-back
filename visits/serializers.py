@@ -31,11 +31,8 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     visits = serializers.HyperlinkedRelatedField(many=True,  view_name='visit-detail', read_only=True)
-    email = serializers.EmailField(
+    username = serializers.EmailField(
             required=True,
-            validators=[UniqueValidator(queryset=User.objects.all())]
-            )
-    username = serializers.CharField(
             validators=[UniqueValidator(queryset=User.objects.all())]
             )
     password = serializers.CharField(min_length=8, write_only=True)
@@ -43,13 +40,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            validated_data['username'],
             first_name = validated_data['first_name'],
             last_name = validated_data['last_name'],
-            email = validated_data['email'],
+            username = validated_data['username'],
             password = validated_data['password'])
         return user
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'password', 'first_name', 'last_name',  'email', 'visits')
+        fields = ('url', 'id', 'password', 'first_name', 'last_name',  'username', 'visits')

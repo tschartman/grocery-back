@@ -35,6 +35,7 @@ class VisitViewSet(viewsets.ModelViewSet):
     serializer_class = VisitSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwner]
 
+    #only get visits from the logged in user
     def get_queryset(self):
         queryset = self.queryset
         query_set = queryset.filter(owner=self.request.user)
