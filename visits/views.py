@@ -22,6 +22,12 @@ class StoreViewSet(viewsets.ModelViewSet):
     serializer_class = StoreSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwner]
 
+    #only get stores from the logged in user
+    def get_queryset(self):
+        queryset = self.queryset
+        query_set = queryset.filter(owner=self.request.user)
+        return query_set
+
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -53,6 +59,12 @@ class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    #only get items from the logged in user
+    def get_queryset(self):
+        queryset = self.queryset
+        query_set = queryset.filter(owner=self.request.user)
+        return query_set
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def perform_create(self, serializer):
