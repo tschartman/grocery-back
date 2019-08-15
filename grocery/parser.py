@@ -41,10 +41,9 @@ def parse_image(url):
     #try to parse the amount of items as an int
     #coupons are shown directly under so include them 
     items = int(re.findall(r"[0-9]*", receiptArr.split(' ')[index])[0]) + coupons
-
-
+  
     barcodeArr = re.findall(r"[0-9]{12}", receiptArr)    
-    foodDict = {}
+    itemsarr = []
     for i in range(0, items):
         url = 'https://www.walmart.com/search/?query=' + barcodeArr[i]
         response = requests.get(url)
@@ -55,13 +54,19 @@ def parse_image(url):
         
         try:
             data = data['searchContent']['preso']['items'][0]
-            foodDict[i] = {
+            itemsarr.append({
                         'brand': data['brand'][0], 
                         'name' : data['seeAllName'],
                         'department' : data['department'],
                         'image' : data['imageUrl'],
                         'link' : data['productPageUrl']
-                        }
+                        })
         except IndexError:
-            foodDict[i] = "not found"
-    return JsonResponse(foodDict)
+            itemsarr.append({
+                        'brand': "", 
+                        'name' : "",
+                        'department' : "",
+                        'image' : "",
+                        'link' : ""
+                        })
+    return JsonResponse({'items': itemsarr})
